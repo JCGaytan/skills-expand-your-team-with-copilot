@@ -472,6 +472,31 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  // Function to generate share URLs for social platforms
+  function generateShareUrls(activityName, description, schedule) {
+    const pageUrl = encodeURIComponent(window.location.origin + window.location.pathname);
+    const shareText = encodeURIComponent(`Check out ${activityName} at Mergington High School! ${description}`);
+    const shareTitle = encodeURIComponent(activityName);
+    
+    return {
+      facebook: `https://www.facebook.com/sharer/sharer.php?u=${pageUrl}`,
+      twitter: `https://twitter.com/intent/tweet?text=${shareText}&url=${pageUrl}`,
+      linkedin: `https://www.linkedin.com/sharing/share-offsite/?url=${pageUrl}`,
+      email: `mailto:?subject=${shareTitle}&body=${shareText}%0A%0ASchedule: ${encodeURIComponent(schedule)}%0A%0A${pageUrl}`
+    };
+  }
+
+  // Function to handle social sharing
+  function handleShare(platform, activityName, description, schedule) {
+    const shareUrls = generateShareUrls(activityName, description, schedule);
+    const url = shareUrls[platform];
+    
+    if (url) {
+      // Open share URL in new window
+      window.open(url, '_blank', 'width=600,height=400');
+    }
+  }
+
   // Function to render a single activity card
   function renderActivityCard(name, details) {
     const activityCard = document.createElement("div");
@@ -519,6 +544,25 @@ document.addEventListener("DOMContentLoaded", () => {
       </div>
     `;
 
+    // Create social sharing buttons
+    const shareButtons = `
+      <div class="share-buttons">
+        <span class="share-label">Share:</span>
+        <button class="share-btn facebook-share" title="Share on Facebook" data-activity="${name}">
+          <span class="share-icon">f</span>
+        </button>
+        <button class="share-btn twitter-share" title="Share on Twitter" data-activity="${name}">
+          <span class="share-icon">X</span>
+        </button>
+        <button class="share-btn linkedin-share" title="Share on LinkedIn" data-activity="${name}">
+          <span class="share-icon">in</span>
+        </button>
+        <button class="share-btn email-share" title="Share via Email" data-activity="${name}">
+          <span class="share-icon">✉</span>
+        </button>
+      </div>
+    `;
+
     activityCard.innerHTML = `
       ${tagHtml}
       <h4>${name}</h4>
@@ -528,6 +572,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <span class="tooltip-text">Regular meetings at this time throughout the semester</span>
       </p>
       ${capacityIndicator}
+      ${shareButtons}
       <div class="participants-list">
         <h5>Current Participants:</h5>
         <ul>
@@ -586,6 +631,28 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       }
     }
+
+    // Add click handlers for share buttons
+    const facebookShareBtn = activityCard.querySelector(".facebook-share");
+    const twitterShareBtn = activityCard.querySelector(".twitter-share");
+    const linkedinShareBtn = activityCard.querySelector(".linkedin-share");
+    const emailShareBtn = activityCard.querySelector(".email-share");
+
+    facebookShareBtn.addEventListener("click", () => {
+      handleShare("facebook", name, details.description, formattedSchedule);
+    });
+
+    twitterShareBtn.addEventListener("click", () => {
+      handleShare("twitter", name, details.description, formattedSchedule);
+    });
+
+    linkedinShareBtn.addEventListener("click", () => {
+      handleShare("linkedin", name, details.description, formattedSchedule);
+    });
+
+    emailShareBtn.addEventListener("click", () => {
+      handleShare("email", name, details.description, formattedSchedule);
+    });
 
     activitiesList.appendChild(activityCard);
   }
