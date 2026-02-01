@@ -552,7 +552,7 @@ document.addEventListener("DOMContentLoaded", () => {
           <span class="share-icon">f</span>
         </button>
         <button class="share-btn twitter-share" title="Share on Twitter" data-activity="${name}">
-          <span class="share-icon">𝕏</span>
+          <span class="share-icon">X</span>
         </button>
         <button class="share-btn linkedin-share" title="Share on LinkedIn" data-activity="${name}">
           <span class="share-icon">in</span>
